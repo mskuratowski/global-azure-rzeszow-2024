@@ -106,6 +106,7 @@ To deploy this Bicep file:
 3. Run the following command, replacing `<resource-group-name>` with the name of your Azure resource group:
 
 ```shell
+az login
 az deployment group create `
     --resource-group rg-test-app-msdasdas `
     --template-file main.bicep `

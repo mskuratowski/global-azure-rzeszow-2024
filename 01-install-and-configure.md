@@ -18,11 +18,16 @@ winget that is avalible for Windows 11 / Windows Server 2022 for Windows 10 need
 winget install -e --id Microsoft.Bicep
 winget install -e --id Microsoft.AzureCLI
 winget install -e --id Microsoft.VisualStudioCode
+winget install --id Git.Git -e --source winge
+```
+PowerShell modules
+
+```powershell
+
+Install-Module -Name Az -Scope CurrentUser # Bez praw administrator
+Install-Module -Name Az -Scope # Jako administrator
 
 ```
-
-PowerShell installation of bicep 
-
 
 ### macOS
 
@@ -132,3 +137,5 @@ The following extensions are recomendations to use witch bicep code writing
   - Use an Extension: [Bracket Pair Colorizer 2 extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer-2)
   - Use Native capability:
     - Inside Visual Studio Code, add `"editor.bracketPairColorization.enabled": true` to your settings.json, to enable bracket pair colorization.
+
+# LAB 00-01-Install-tools

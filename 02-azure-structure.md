@@ -40,3 +40,5 @@ Subskrypcji. Wszystkie subskrypcje w grupie zarządzania automatycznie dziedzicz
  * Dostepu do zasobów - podział na mniejsze jednostki dostępowe.  
 
  ![Az-rg-life](./assest/az-8.png)
+
+ # Demo
