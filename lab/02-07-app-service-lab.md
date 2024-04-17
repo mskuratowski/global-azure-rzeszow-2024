@@ -111,7 +111,7 @@ az login # logowanie
 az group create --location "WestEurope" --name "rg-test-app-msdasdas" ## stworzenie resource group
 
 az deployment group create `
-    --resource-group rg-test-app-msdasdas `
+    --resource-group <<RG_NAME>> `
     --template-file main.bicep `
     --parameters main.bicepparam `
     --confirm-with-what-if
