@@ -1,32 +1,32 @@
-## Utwórz Azure App Service za pomocą Bicep
+## Create an Azure App Service with Bicep
 
-### Cel
-Twoim zadaniem jest utworzenie usługi Azure App Service przy użyciu Bicep. Azure App Service powinna mieć określone 'application setting' (`TEST1` z wartością `value`) i być skonfigurowana tak, aby akceptować ruch tylko z twojego adresu IP przy użyciu `ipSecurityRestrictions`.
+### Objective
+Your task is to create an Azure App Service using Bicep, an Infrastructure as Code (IaC) language for deploying Azure resources. This App Service should have a specific application setting (`TEST1` with the value `value`) and be configured to only accept traffic from your IP address using `ipSecurityRestrictions`.
 
-### Wymagania
+### Requirements
 
-1. **Azure App Service Plan**: Utwórz plan usługi Azure App Service. Specyfika warstwy cenowej i regionu zależy od Ciebie, ale powinna być zgodna z usługą App Service, którą zamierzasz wdrożyć.
-2. **Azure App Service**: Wdrożenie usługi Azure App Service w ramach utworzonego planu App Service.
-3. **AppSettings**: Skonfiguruj usługę App Service tak, aby zawierała ustawienie aplikacji o nazwie `TEST1` z wartością `value`.
-4. **IP Security Restrictions**: Ograniczenie dostępu do App Service tak, aby dozwolone były tylko żądania z określonego adresu IP użytkownika.
+1. **Azure App Service Plan**: Create an Azure App Service Plan. The specifics of the pricing tier and region are up to you, but it should be compatible with the App Service you intend to deploy.
+2. **Azure App Service**: Deploy an Azure App Service within the App Service Plan you created.
+3. **AppSettings**: Configure the App Service to include an application setting named `TEST1` with the value `value`.
+4. **IP Security Restrictions**: Restrict access to the App Service so that only requests from your specific IP address are allowed.
 
-### Instrukcje
+### Instructions
 
-1. Zainstaluj niezbędne narzędzia, jeśli jeszcze tego nie zrobiłeś: Azure CLI i Bicep.
-2. Utwórz nowy plik Bicep o nazwie `appservice.bicep`.
-3. Zdefiniuj zasoby i właściwości wymagane do spełnienia powyższych wymagań w pliku Bicep.
-4. Wykonaj wdrożenie.
+1. Install the necessary tools if you haven't already: Azure CLI and Bicep.
+2. Create a new Bicep file named `appservice.bicep`.
+3. Define the resources and properties required to meet the above requirements in your Bicep file.
+4. Deploy your Bicep file using the Azure CLI.
 
-### Pomocne zasoby
+### Helpful Resources
 
-- [Bicep Dokumentacja](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-- [Azure App Service Dokumentacja](https://docs.microsoft.com/en-us/azure/app-service/)
-- [Azure CLI Dokumentacja](https://docs.microsoft.com/en-us/cli/azure/)
+- [Bicep Documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
+- [Azure App Service Documentation](https://docs.microsoft.com/en-us/azure/app-service/)
+- [Azure CLI Documentation](https://docs.microsoft.com/en-us/cli/azure/)
 
 <details>
-<summary>Rozwiązanie</summary>
+<summary>Solution</summary>
 
-Oto podstawowy przykład tego, jak można zdefiniować plik `appservice.bicep`, aby spełnić wymagania:
+Here's a basic example of how you might define your `appservice.bicep` file to meet the requirements:
 
 ```bicep
 // --------------------------------------------------------------------------------
@@ -99,17 +99,14 @@ resource app 'Microsoft.Web/sites@2023-01-01' = {
 output appServiceUrl string = 'https://${app.properties.defaultHostName}'
 ```
 
-Aby wdrożyć:
+To deploy this Bicep file:
 
-1. Otwórz terminal.
-2. Przejdź do katalogu zawierającego plik `appservice.bicep`.
-3. Uruchom następujące polecenie, zastępując `<resource-group-name>` nazwą grupy zasobów Azure:
+1. Open your terminal or command prompt.
+2. Navigate to the directory containing your `appservice.bicep` file.
+3. Run the following command, replacing `<resource-group-name>` with the name of your Azure resource group:
 
 ```shell
-az login # logowanie
-
-az group create --location "WestEurope" --name "rg-test-app-msdasdas" ## stworzenie resource group
-
+az login
 az deployment group create `
     --resource-group rg-test-app-msdasdas `
     --template-file main.bicep `
@@ -117,7 +114,6 @@ az deployment group create `
     --confirm-with-what-if
 ```
 
-To polecenie wdroży zasoby zdefiniowane w pliku Bicep w subskrypcji Azure.
-
+This command will deploy the resources defined in your Bicep file to your Azure subscription.
 
 </details>
