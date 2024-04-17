@@ -2,29 +2,29 @@
 
 ## Bicep parameters
 
-### Parameters - Best practices
-- Don’t create parameters for values that can be computed based on other parameters - better avoid unnecessary parameters since it adds complexity we need to manage.
-- Do have parameters when values can change between template usages, for example, when using the same template for different environments - e.g. development, test, production.
-- Do use parameters to pass secrets - never store secrets as plain text in source code, better reference secrets from such services as Key Vault.
+### Parameters - najelepsze praktyki
+- Nie twórz parametrów dla wartości, które można obliczyć na podstawie innych parametrów - lepiej unikaj niepotrzebnych parametrów, ponieważ zwiększa to złożoność, którą musimy zarządzać.
+- Mają parametry, gdy wartości mogą się zmieniać między użyciami szablonu, na przykład podczas korzystania z tego samego szablonu dla różnych środowisk - np. programowania, testowania, produkcji.
+- Używaj parametrów do przekazywania wpisów tajnych — nigdy nie przechowuj wpisów tajnych jako zwykłego tekstu w kodzie źródłowym, lepiej odwołuj się do wpisów tajnych z takich usług, jak Key Vault.
 
-### Parameters - 5 types available
+### Parameters - 5 typy zmiennych
 - string
 - object
 - array
 - int
 - bool
 
-### How to use declare parameters? - Basic
+### Jak deklarować parametry w pliku bicep ? - Basic
 ```bicep
 // param myParam1 <type>
-param myParam1 string
+param par_my_param1 string
 
 // param myParam2 <type> = <default_value>
-param myParam2 string = 'foobar'
+param par_my_Param2 string = 'foobar'
 ```
 
-### How to use declare parameters? - Advanced
-As a more advanced case I’d consider the use of decorators to enforce different constraints on input values.
+### Jak deklarować parametry w pliku bicep ? - Advanced
+Jako bardziej zaawansowany przypadek rozważyłbym użycie dekoratorów do wymuszania różnych ograniczeń wartości wejściowych.
 ```bicep
 // @decorator1()
 // @decorator2()
@@ -38,7 +38,7 @@ As a more advanced case I’d consider the use of decorators to enforce differen
 // @metadata({
 //   description: 'Number of virtual machines'
 // })
-param virtualMachineCount int = 3
+param par_virtual_Machine_Count int = 3
 ```
 
 Bicep parameters to ARM Template
@@ -60,10 +60,26 @@ Bicep parameters to ARM Template
 }
 ```
 
+Bicep parameters for bicep files
+```bicep
+using './main.bicep'
+
+@minValue(3)
+@maxValue(9)
+@description('Number of virtual machines')
+param par_virtual_Machine_Count int = 3
+
+var var_storage_Prefix = 'myStorage'
+
+param par_primary_StorageName = '${storagePrefix}Primary'
+param par_secondary_StorageName = '${storagePrefix}Secondary'
+
+```
+
 ### Constraints
-- Name must be unique among other parameters, variables, and resources, but can be the same as outputs.
-- Name is case-insensitive - even though Bicep allows creating two parameters whose names only differ in case, it will fail during template deployment telling that item with the same key has already been added.
-- Maximum 256 parameters per file - it’s a very generous limit, if you start getting many parameters then you should probably modularize your template.
+- Nazwa musi być unikatowa wśród innych parametrów, zmiennych i zasobów, ale może być taka sama jak dane wyjściowe.
+- W nazwie nie jest rozróżniana wielkość liter — mimo że Bicep umożliwia tworzenie dwóch parametrów, których nazwy różnią się tylko wielkością liter, zakończy się niepowodzeniem podczas wdrażania szablonu, informując, że element z tym samym kluczem został już dodany.
+- Maksymalnie 256 parametrów na plik - to bardzo hojny limit, jeśli zaczniesz otrzymywać wiele parametrów, prawdopodobnie powinieneś modularyzować swój szablon.
 
 ### Where To Declare Parameters?
 In Bicep we can declare parameters in any place, it doesn’t actually matter.
@@ -144,9 +160,9 @@ az deployment group create \
 ```
 
 ## Parameter File
-In Bicep we also can create parameter files like in plain old ARM templates, moreover, Bicep just uses ARM template parameter files and doesn’t add anything new.
+W Bicep możemy również tworzyć pliki parametrów, tak jak w zwykłych starych szablonach usługi ARM, co więcej, Bicep po prostu używa plików parametrów szablonów usługi ARM i nie dodaje niczego nowego.
 
-So, parameter files can be used in the same way, for example, we could have main.bicep and main.parameters.json files.
+Tak więc pliki parametrów mogą być używane w ten sam sposób, na przykład możemy mieć main.bicep i pliki main.parameters.json.
 
 main.bicep
 ```bicep
@@ -175,6 +191,12 @@ New-AzResourceGroupDeployment `
   -ResourceGroupName rg-contoso `
   -TemplateFile ./main.bicep `
   -TemplateParameterFile ./main.parameters.json
+
+New-AzResourceGroupDeployment `
+  -Name myBicepTemplateDeployment `
+  -ResourceGroupName rg-contoso `
+  -TemplateFile ./main.bicep `
+  -TemplateParameterFile ./main.parameters.bicepparams
 ```
 
 ```azurecli
@@ -184,10 +206,17 @@ az deployment group create \
   --resource-group rg-contoso \
   --template-file ./main.bicep \
   --parameters @main.parameters.json
+
+Azure CLI
+az deployment group create \
+  --name myBicepTemplateDeployment \
+  --resource-group rg-contoso \
+  --template-file ./main.bicep \
+  --parameters @main.parameters.bicepparams
 ```
 
 ## Decorators: Constraints And Metadata
-In Bicep decorators are used to specify constraints and metadata for a parameter. Here’s a list of decorators in Bicep:
+W Bicep dekoratory służą do określania ograniczeń i metadanych dla parametru. Oto lista dekoratorów w Bicep:
 - allowed
 - secure
 - minLength & maxLength
@@ -201,7 +230,7 @@ In Bicep decorators are used to specify constraints and metadata for a parameter
 @secure()
 @minLength(8)
 @maxLength(24)
-param adminPassword string
+param par_admin_Password string
 ```
 
 #### Metadata Decorator
@@ -210,13 +239,13 @@ param adminPassword string
   description: 'The number of virtual machines that will be created'
   myCustomField: 'Something important here'
 })
-param virtualMachineCount int
+param par_virtual_Machine_Count int
 ```
 
 #### Description Decorator
 ```bicep
 @description('The number of virtual machines that will be created')
-param virtualMachineCount int
+param par_virtual_Machine_Count int
 ```
 
 Description decorator is a less verbose way to specify metadata object with description. If we only want to specify description, I’d rather use description decorator instead of metadata.
@@ -382,8 +411,8 @@ var myTag = '${stg.type}-${stg.kind}-${stg.sku.name}'
 ```
 
 #### Modules
-If a module returns some values in outputs section, they can also be used in variable declaration.
-In the example below module returns full storage account object in outputs which we then use in the main template.
+Jeśli moduł zwraca pewne wartości w sekcji outputs, mogą one być również używane w deklaracji zmiennej.
+W poniższym przykładzie moduł zwraca pełny obiekt konta magazynu w danych wyjściowych, których następnie używamy w szablonie głównym.
 
 ```bicep
 // ===== main.bicep =====
@@ -391,19 +420,19 @@ In the example below module returns full storage account object in outputs which
 module stg './storage.bicep' = {
   name: 'storageDeployment'
   params: {
-    storageAccountName: 'stcontoso'
+    par_storage_Account_Name: 'stcontoso'
   }
 }
 
 // Using module outputs to create a variable
-var myTag = '${stg.outputs.storageAccount.kind}-${stg.outputs.storageAccount.sku.name}'
+var var_my_Tag = '${stg.outputs.storageAccount.kind}-${stg.outputs.storageAccount.sku.name}'
 
 // ===== ./storage.bicep =====
 
-param storageAccountName string
+param par_storage_AccountName string
 
 resource stg 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: storageAccountName
+  name: par_storage_AccountName
   location: resourceGroup().location
   kind: 'StorageV2'
   sku: {
@@ -415,20 +444,20 @@ output storageAccount object = stg
 ```
 ### Use Functions
 ```bicep
-param prefix string
-var location = resourceGroup().location
+param par_prefix string
+var var_location = resourceGroup().location
 
 resource stg 'Microsoft.Storage/storageAccounts@2021-02-01' existing = {
   name: 'stcontoso'
 }
 
-var myTag = '${prefix}-${location}-${stg.sku}'
+var var_Tag = '${prefix}-${location}-${stg.sku}'
 ```
 
 ### Use Loops
 #### Creating a variable using a for-loop
 ```bicep
-var secretsValues = [for i in range(0, 3): {
+var var_secrets_Values = [for i in range(0, 3): {
   name: 'secret${i}'
   value: 'supersecretvalue${i}'
 }]
@@ -453,6 +482,6 @@ resource secrets 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = [for secret in
 ```
 
 ### Constraints & Limitations
-- Name must be unique among parameters, resources, modules, and other variables, but it can be the same as output name
-- Cannot reassign another value to a variable (assign only once)
-- Declaration and initialization can’t be separated
+- Nazwa musi być unikatowa wśród parametrów, zasobów, modułów i innych zmiennych, ale może być taka sama jak nazwa wyjściowa
+- Nie można ponownie przypisać innej wartości do zmiennej (przypisać tylko raz)
+- Nie można rozdzielić deklaracji i inicjalizacji
